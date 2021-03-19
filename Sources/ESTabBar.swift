@@ -168,6 +168,8 @@ internal extension ESTabBar /* Layout */ {
             return
         }
         
+        tabBarController?.view.backgroundColor = .green
+        
         let tabBarButtons = subviews.filter { subview -> Bool in
             if let cls = NSClassFromString("UITabBarButton") {
                 return subview.isKind(of: cls)
@@ -210,6 +212,20 @@ internal extension ESTabBar /* Layout */ {
                 layoutBaseSystem = false
             }
         }
+        
+        let firstContainer = containers.first//?.subviews.first
+        let lastContainer = containers.last//?.subviews.first
+        
+        firstContainer?.layer.cornerRadius = 20
+        firstContainer?.layer.maskedCorners = [.layerMinXMinYCorner]
+        firstContainer?.clipsToBounds = true
+        firstContainer?.layer.applySketchShadow()
+        
+        lastContainer?.layer.cornerRadius = 20
+        lastContainer?.layer.maskedCorners = [.layerMaxXMinYCorner]
+        lastContainer?.clipsToBounds = true
+        
+        
         
         if layoutBaseSystem {
             // System itemPositioning
@@ -433,6 +449,39 @@ internal extension ESTabBar /* Actions */ {
                 container.accessibilityLabel = String(format: formatString, accessibilityTitle, idx + 1, tabBarItems.count)
             }
             
+        }
+    }
+}
+extension ESTabBar {
+    open override func sizeThatFits(_ size: CGSize) -> CGSize {
+        return CGSize(width: size.width, height: UIDevice.current.hasNotch ? 120.0 : 90.0)
+    }
+}
+extension UIDevice {
+    var hasNotch: Bool {
+        let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        return bottom > 0
+    }
+}
+extension CALayer {
+    func applySketchShadow(
+        color: UIColor = .black,
+        alpha: Float = 0.5,
+        x: CGFloat = 0,
+        y: CGFloat = 2,
+        blur: CGFloat = 4,
+        spread: CGFloat = 0)
+    {
+        shadowColor = color.cgColor
+        shadowOpacity = alpha
+        shadowOffset = CGSize(width: x, height: y)
+        shadowRadius = blur / 2.0
+        if spread == 0 {
+            shadowPath = nil
+        } else {
+            let dx = -spread
+            let rect = bounds.insetBy(dx: dx, dy: dx)
+            shadowPath = UIBezierPath(rect: rect).cgPath
         }
     }
 }

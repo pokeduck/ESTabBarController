@@ -97,6 +97,9 @@ open class ESTabBarController: UITabBarController, ESTabBarDelegate {
             return tabBar
         }()
         self.setValue(tabBar, forKey: "tabBar")
+        
+        UITabBar.appearance().shadowImage = nil
+        UITabBar.appearance().clipsToBounds = true
     }
 
     // MARK: - UITabBar delegate
@@ -130,6 +133,7 @@ open class ESTabBarController: UITabBarController, ESTabBarDelegate {
     
     // MARK: - ESTabBar delegate
     internal func tabBar(_ tabBar: UITabBar, shouldSelect item: UITabBarItem) -> Bool {
+        tabBar.setNeedsDisplay()
         if let idx = tabBar.items?.firstIndex(of: item), let vc = viewControllers?[idx] {
             return delegate?.tabBarController?(self, shouldSelect: vc) ?? true
         }
